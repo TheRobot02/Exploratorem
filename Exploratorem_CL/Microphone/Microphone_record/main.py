@@ -1,16 +1,21 @@
 import sounddevice as sd
 
-# Set up recording parameters
-fs = 44100  # Sample rate
-duration = 5  # Duration in seconds
 
-# Record audio from microphone
-print('Recording...')
-recording = sd.rec(int(duration * fs), samplerate=fs, channels=2)
+class microphoneRecord:
+    def __init__(self):
+        # Set up recording parameters
+        self.fs = 44100  # Sample rate
+        self.duration = 5  # Duration in seconds
 
-# Wait for recording to finish
-sd.wait()
+    def record(self):
 
-# Play back recorded audio
-print('Playing back...')
-sd.play(recording, fs)
+        #Record audio from microphone
+        print('Recording...')
+        self.recording = sd.rec(int(self.duration * self.fs), samplerate=self.fs, channels=2)
+
+        # Wait for recording to finish
+        sd.wait()
+
+        # Play back recorded audio
+        print('Playing back...')
+        sd.play(self.recording, self.fs)

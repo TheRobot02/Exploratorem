@@ -3,9 +3,8 @@ import socket
 import threading
 
 class Application(tk.Frame):
-    """
-    A Tkinter GUI application that displays a list of connected clients.
-    """
+    #A Tkinter GUI application that displays a list of connected clients.
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
@@ -14,31 +13,27 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        """
-        Create the GUI widgets.
-        """
+        #Create the GUI widgets.
+ 
         self.client_list = tk.Listbox(self)
         self.client_list.pack(fill="both", expand=True)
 
     def update_client_list(self, client_addr):
-        """
-        Update the client list in the GUI with the given client address.
-        """
+        #Update the client list in the GUI with the given client address.
+
         self.client_list.insert(tk.END, client_addr)
 
 class SocketServer:
-    """
-    A simple socket server that listens for incoming connections on a given host and port.
-    """
+    #A simple socket server that listens for incoming connections on a given host and port.
+
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.sock = None
+        
     
     def start(self):
-        """
-        Start the socket server.
-        """
+        #Start the socket server.
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind((self.host, self.port))
         self.sock.listen(1)
@@ -52,9 +47,8 @@ class SocketServer:
             client_handler.start()
 
     def handle_client(self, conn, addr):
-        """
-        Handle incoming data from a client connection.
-        """
+        #Handle incoming data from a client connection.
+
         with conn:
             while True:
                 data = conn.recv(1024)
@@ -76,9 +70,8 @@ if __name__ == "__main__":
     app = Application(master=mainWindow)
 
     def update_list():
-        """
-        Update the client list in the GUI whenever a new client connects.
-        """
+        #Update the client list in the GUI whenever a new client connects.
+
         while True:
             if server.sock is not None:
                 conn, addr = server.sock.accept()
