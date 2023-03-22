@@ -1,64 +1,72 @@
 import smtplib
 import base64
+class send_mail:
+    def __init__(self):
+        
+        # zet de gegevens voor de e-mail
+        self.FROM_EMAIL = "klooien90@hotmail.com"
+        self.TO_EMAIL = "infranaat3@gmail.com"
+        self.PASSWORD = "s3samzaad"
+        self.HOST = "smtp-mail.outlook.com"
+        self.PORT = 587
+        self.BESTAND = "test.txt"
 
-# zet de gegevens voor de e-mail
-FROM_EMAIL = "klooien90@hotmail.com"
-TO_EMAIL = "infranaat3@gmail.com"
-PASSWORD = "s3samzaad"
-HOST = "smtp-mail.outlook.com"
-PORT = 587
-BESTAND = "test.txt"
-# maak de SMTP-verbinding
-smtp_server = smtplib.SMTP(HOST, PORT)
-smtp_server.ehlo()
-smtp_server.starttls()
-smtp_server.login(FROM_EMAIL, PASSWORD)
+    def mailSend(self):
+        # maak de SMTP-verbinding
+        smtp_server = smtplib.SMTP(self.HOST, self.PORT)
+        smtp_server.ehlo()
+        smtp_server.starttls()
+        smtp_server.login(self.FROM_EMAIL, self.PASSWORD)
 
-# lees het bestand in als bytes
-with open(BESTAND, "rb") as f:
-    file_data = f.read()
+        # lees het bestand in als bytes
+        with open(self.BESTAND, "rb") as f:
+            file_data = f.read()
 
-# converteer de bytes naar base64
-file_data_b64 = base64.b64encode(file_data).decode()
+        # converteer de bytes naar base64
+        file_data_b64 = base64.b64encode(file_data).decode()
 
-# maak de MIME-headers
-subject = "Get Huge Co-w, NOW!"
-boundary = "===my_boundary==="
-attachment_filename = BESTAND
-headers = f"""From: {FROM_EMAIL}
-To: {TO_EMAIL}
-Subject: {subject}
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="{boundary}"
+        # maak de MIME-headers
+        subject = "Get Huge Co-w, NOW!"
+        boundary = "===my_boundary==="
+        attachment_filename = self.BESTAND
+        headers = f"""From: {self.FROM_EMAIL}
+        To: {self.TO_EMAIL}
+        Subject: {subject}
+        MIME-Version: 1.0
+        Content-Type: multipart/mixed; boundary="{boundary}"
 
---{boundary}
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        --{boundary}
+        Content-Type: text/plain; charset="utf-8"
+        Content-Transfer-Encoding: 7bit
 
-Are you ready?
+        Are you ready?
 
---{boundary}
-Content-Type: application/pdf; name="{attachment_filename}"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="{attachment_filename}"
+        --{boundary}
+        Content-Type: application/pdf; name="{attachment_filename}"
+        Content-Transfer-Encoding: base64
+        Content-Disposition: attachment; filename="{attachment_filename}"
 
-{file_data_b64}
+        {file_data_b64}
 
---{boundary}--"""
+        --{boundary}--"""
 
-smtp = smtplib.SMTP(HOST, PORT)
+        smtp = smtplib.SMTP(self.HOST, self.PORT)
 
-status_code, response = smtp.ehlo()
-print(f"[*] Echoing the server: {status_code} {response}")
+        status_code, response = smtp.ehlo()
+        print(f"[*] Echoing the server: {status_code} {response}")
 
-status_code, response = smtp.starttls()
-print(f"[*] Starting TLS connection: {status_code} {response}")
+        status_code, response = smtp.starttls()
+        print(f"[*] Starting TLS connection: {status_code} {response}")
 
-status_code, response = smtp.login(FROM_EMAIL, PASSWORD)
-print(f"[*] Logging in: {status_code} {response}")
+        status_code, response = smtp.login(self.FROM_EMAIL, self.PASSWORD)
+        print(f"[*] Logging in: {status_code} {response}")
 
-# verstuur de e-mail
-smtp_server.sendmail(FROM_EMAIL, TO_EMAIL, headers)
+        # verstuur de e-mail
+        smtp_server.sendmail(self.FROM_EMAIL, self.TO_EMAIL, headers)
 
-# verbreek de SMTP-verbinding
-smtp_server.quit()
+        # verbreek de SMTP-verbinding
+        smtp_server.quit()
+
+if __name__ == "__main__":
+    mail = send_mail()
+    mail.mailSend()
