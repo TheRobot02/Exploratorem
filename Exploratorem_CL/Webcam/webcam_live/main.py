@@ -4,7 +4,7 @@ import cv2 as cv
 class webcamLive:
     def __init__(self):
         self.capture = cv.VideoCapture(0) # Use default webcam
-        self.face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
+        self.face_cascade = cv.CascadeClassifier('.\Exploratorem_CL\Webcam\webcam_live\haarcascade_frontalface_default.xml')
 
     def webcam(self):
 
@@ -26,12 +26,22 @@ class webcamLive:
         # Draw a rectangle around each face
         for (x, y, w, h) in faces:
             cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+        return frame
             
     def start(self):
         while True:
             frame = self.webcam()
-            return frame
+            cv.imshow('Webcam', frame)
+            if cv.waitKey(1) == ord('q'): # Press q to quit
+                break
 
-    def stop(self):
         self.capture.release()
+        cv.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    live = webcamLive()
+    live.start()
+
 

