@@ -1,4 +1,5 @@
 import socket
+import threading as thread
 
 class ServerConnection:
     def __init__(self, host, port):
@@ -18,22 +19,23 @@ class ServerConnection:
         else:
             print(f"Server is already running")
     
+    def listenForConnection(self):
+        while True:
+            conn, addr = self.sock.accept()
+            thread.Thread(target=self.handle_client(conn, addr))
+            if addr != None:
+                self.ipadress = addr
+
     def handle_client(self, conn, addr):
         with conn:
             print(f"Connected by {addr}")
-            while True:
+            while conn == True:
                 data = conn.recv(1024)
                 if not data:
                     break
                 print(f"Received {data.decode('utf-8').strip()} from {addr}")
-                conn.sendall(b"OK")
-    
-    def listenForConnection(self):
-        while True:
-            conn, addr = self.sock.accept()
-            self.handle_client(conn, addr)
-            if addr != None:
-                self.ipadress = addr
+                conn.send(b"OK")
+            print(f"{addr} disconnected")
 
     def ipReturn(self):
         return self.ipadress
