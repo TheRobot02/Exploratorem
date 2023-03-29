@@ -28,6 +28,13 @@ class SocketClient:
 
 
 if __name__ == "__main__":
+
+    incomming_data = conn.recv(1024)
+    print(f"Received {data.decode('utf-8').strip()} from {addr}")
+    outgoing_data = 
+
+
+
     try:
         serverHost = 'PortablePaperWeight'    # the IP address or hostname of the server
         port = 5000                 # the port used by the server
@@ -39,7 +46,12 @@ if __name__ == "__main__":
         exit()
 
     print(f"Conneciton has been made")
-    time.sleep(10)
+
+
+    
+    
+    
+    
     try:
         client.close()
         print("Connection closed")
