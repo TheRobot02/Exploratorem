@@ -10,7 +10,7 @@ from components import webcam, microphone, directory
 
 
 
-bot_token = "MTA5MDMyOTIwMzI4MDQ0OTY2Ng.Gr6zoD.DPltyUkRKv906QK2dlMjRK48rehwLZkz-q2GyM"
+bot_token = "DISCORD-BOT-TOKEN"
 
 
 intents = discord.Intents.default()
